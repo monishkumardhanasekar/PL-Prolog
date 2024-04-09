@@ -23,9 +23,12 @@
 % as List and whose elements are the lengths of the corresponding
 % sub-list in List.  You may assume that all the elements of List
 % are sub-lists.
-sublist_lengths(_List, _Lengths) :- 'TODO'.
+sublist_lengths([], []). % Base case: an empty list has no sublists, so the lengths list is also empty.
+sublist_lengths([Sublist|Rest], [Length|Lengths]) :-
+    length(Sublist, Length), % Get the length of the current sublist.
+    sublist_lengths(Rest, Lengths). % Recur for the remaining sublists.
 
-:-begin_tests(sublist_lengths, [blocked('TODO')]).
+:- begin_tests(sublist_lengths).
 test(empty, [nondet]) :-
     sublist_lengths([], Lengths), Lengths = [].
 test(sublist_lengths1, [nondet]) :-
@@ -34,7 +37,7 @@ test(sublist_lengths3, [nondet]) :-
     sublist_lengths([[2], [a, b], [x, y, z]], Lengths), Lengths = [1, 2, 3].
 test(sublist_lengths_var_list, [nondet]) :-
     sublist_lengths(List, [1, 2, 3]), length(List, 3).
-:-end_tests(sublist_lengths).
+:- end_tests(sublist_lengths).
 
 %%%%%%%%%%%%%%%%%%%%%%%%% same_length_sublists/1 %%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -45,9 +48,25 @@ test(sublist_lengths_var_list, [nondet]) :-
 % List are sub-lists.  The procedure should succeed for an empty List.
 %
 % *Hint*: use an auxiliary procedure.
-same_length_sublists(_List) :- 'TODO'.
+% Base case: an empty list has sublists of the same length.
+same_length_sublists([]).
 
-:-begin_tests(same_length_sublists, [blocked('TODO')]).
+% Main predicate
+same_length_sublists([Sublist|Rest]) :-
+    % Get the length of the first sublist
+    length(Sublist, Length),
+    % Check if all other sublists have the same length
+    check_length(Length, Rest).
+
+% Recursive predicate to check the length of each sublist
+check_length(_Length, []).
+check_length(Length, [Sublist|Rest]) :-
+    % Get the length of the current sublist
+    length(Sublist, Length),
+    % Continue checking the length of the remaining sublists
+    check_length(Length, Rest).
+
+:- begin_tests(same_length_sublists).
 test(empty, [nondet]) :-
     same_length_sublists([]).
 test(empties, [nondet]) :-
@@ -62,7 +81,7 @@ test(sublists3, [nondet]) :-
     same_length_sublists([[a, [2], 4], [b, 5, [1]], [3, 2, c]]).
 test(sublists3_fail, [fail]) :-
     same_length_sublists([[a, 2, 4], [b, 5, 1], [3, [2, c]]]).
-:-end_tests(same_length_sublists).
+:- end_tests(same_length_sublists).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% fibonacci_sublists/1 %%%%%%%%%%%%%%%%%%%%%%%%%
@@ -118,6 +137,7 @@ test(four_start_22_fail, [fail]) :-
 :-end_tests(fibonacci_sublists).
 
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% assoc_lookup/3 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % #4: 5-points
@@ -129,9 +149,10 @@ test(four_start_22_fail, [fail]) :-
 % Key in association list Assoc.
 % *Restriction*: you may not use recursion.
 % *Hint* your solution should simply call a Prolog built-in.
-assoc_lookup(_Assoc, _Key, _Value) :- 'TODO'.
+assoc_lookup(Assoc, Key, Value) :-
+    member((Key,Value),Assoc).
 
-:-begin_tests(assoc_lookup, [blocked('TODO')]).
+:-begin_tests(assoc_lookup).
 test(empty, [fail]) :-
     assoc_lookup([], key, _Value).
 test(first, [nondet]) :-
@@ -169,9 +190,16 @@ test(unbound_key, [nondet]) :-
 % exercise and Prolog's built-ins atom(A) which succeeds if A is an
 % atom and integer(I) which succeeds if I is an integer.
 
-assoc_replace(_AtomIntList, _Assoc, _ListZ) :- 'TODO'.
+assoc_replace([], _Assoc, []).
+assoc_replace([H|T], Assoc, [R|Rest]) :-
+    (   atom(H),
+        assoc_lookup(Assoc, H, R) % Replace atom with its value
+    ;   integer(H),
+        R = H % Leave integers unchanged
+    ),
+    assoc_replace(T, Assoc, Rest).
 
-:-begin_tests(assoc_replace, [blocked('TODO')]).
+:-begin_tests(assoc_replace).
 test(empty, [nondet]) :-
     assoc_replace([], [(a,22), (b, 33), (c, 42)], Z),
     Z = [].
@@ -202,9 +230,12 @@ test(multi_fail, [fail]) :-
 % is the same as AddExpr with each add replaced by +.
 %
 % *Hint*: the Prolog built-in integer(I) succeeds iff I is an integer.
-add_to_plus_expr(_AddExprI, _PlusExpr) :- 'TODO'.
+add_to_plus_expr(I, I) :- integer(I).
+add_to_plus_expr(add(X, Y), XZ + YZ) :-
+    add_to_plus_expr(X, XZ),
+    add_to_plus_expr(Y, YZ).
 
-:-begin_tests(add_to_plus_expr, [blocked('TODO')]).
+:-begin_tests(add_to_plus_expr).
 test(int, [nondet]) :-
     add_to_plus_expr(42, Z), Z = 42.
 test(add_2_3, [nondet]) :-
@@ -253,9 +284,15 @@ test(rev_add_1_add_2_add_3_add_4_5, [nondet]) :-
 % + and * respectively.
 % It should be possible to run this procedure with either one or
 % both arguments instantiated.
-named_to_op_expr(_NamedExpr, _OpExpr) :- 'TODO'.
+named_to_op_expr(I, I) :- integer(I).
+named_to_op_expr(add(X, Y), XZ + YZ) :-
+    named_to_op_expr(X, XZ),
+    named_to_op_expr(Y, YZ).
+named_to_op_expr(mul(X, Y), XZ * YZ) :-
+    named_to_op_expr(X, XZ),
+    named_to_op_expr(Y, YZ).
 
-:-begin_tests(named_to_op_expr, [blocked('TODO')]).
+:-begin_tests(named_to_op_expr).
 test(int, [nondet]) :-
     NamedExpr = 42, OpExpr = 42,
     named_to_op_expr(NamedExpr, Z),
@@ -404,9 +441,17 @@ test(rev_mul_add_1_2_mul_3_4, [nondet]) :-
 % should add its operands and mul should multiply them).
 %
 % *Hint*: combine your solution to the previous exercise with is/2.
-named_expr_eval(_NamedExpr, _Value) :- 'TODO'.
+named_expr_eval(I, I) :- integer(I).
+named_expr_eval(add(X, Y), Value) :-
+    named_expr_eval(X, XV),
+    named_expr_eval(Y, YV),
+    Value is XV + YV.
+named_expr_eval(mul(X, Y), Value) :-
+    named_expr_eval(X, XV),
+    named_expr_eval(Y, YV),
+    Value is XV * YV.
 
-:-begin_tests(named_expr_eval, [blocked('TODO')]).
+:-begin_tests(named_expr_eval).
 test(int, [nondet]) :-
     named_expr_eval(42, 42).
 
@@ -451,9 +496,23 @@ test(mul_add_1_2_mul_3_4, [nondet]) :-
 % a list of the tokens in NamedExpr in prefix notation.
 %
 % *Hint*: use append/3.
-named_expr_to_prefix_tokens(_NamedExpr, _PrefixTokens) :- 'TODO'.
+% Base case: If the named expression is an integer, the prefix token list
+% contains only that integer.
+named_expr_to_prefix_tokens(Int, [Int]) :-
+    integer(Int).
 
-:-begin_tests(named_expr_to_prefix_tokens, [blocked('TODO')]).
+% Recursive cases for addition and multiplication.
+named_expr_to_prefix_tokens(add(X, Y), [add | Tokens]) :-
+    named_expr_to_prefix_tokens(X, XT),
+    named_expr_to_prefix_tokens(Y, YT),
+    append(XT, YT, Tokens).
+
+named_expr_to_prefix_tokens(mul(X, Y), [mul | Tokens]) :-
+    named_expr_to_prefix_tokens(X, XT),
+    named_expr_to_prefix_tokens(Y, YT),
+    append(XT, YT, Tokens).
+
+:-begin_tests(named_expr_to_prefix_tokens).
 test(int, [nondet]) :-
     named_expr_to_prefix_tokens(42, [42]).
 
