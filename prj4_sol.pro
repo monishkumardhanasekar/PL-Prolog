@@ -94,9 +94,17 @@ test(sublists3_fail, [fail]) :-
 % where List[i] is the sublist at index i in List.  You may
 % assume that List contains only sublists.  The procedure
 % should trivially succeed if the length of List is < 3.
-fibonacci_sublists(_List) :- 'TODO'.
+fibonacci_sublists([]).
+fibonacci_sublists([_]).
+fibonacci_sublists([_, _]).
+fibonacci_sublists([A, B, C|Rest]) :-
+    length(A, LenA),
+    length(B, LenB),
+    length(C, LenC),
+    LenC is LenA + LenB,
+    fibonacci_sublists([B, C|Rest]).
 
-:-begin_tests(fibonacci_sublists, [blocked('TODO')]).
+:-begin_tests(fibonacci_sublists).
 test(empty, [nondet]) :-
     fibonacci_sublists([]).
 test(zero, [nondet]) :-
