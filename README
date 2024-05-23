@@ -1,6 +1,14 @@
-Name:		Monish Kumar Dhanasekar
-B-Number:	B01025975
-Email:	    mdhanasekar@binghamton.edu
+This project is of recursive programming concepts and Prolog programming language. It involves implementing specified procedures in Prolog to perform various tasks such as sublist manipulations and expression evaluation. The project emphasizes adherence to Prolog's logical programming principles and provides unit tests for verification.
 
-Add text here as needed to document the status of your project.
+In this project, the following functionalities were implemented:
 
+1. Calculation of sublist lengths.
+2. Generation of sublists with the same length.
+3. Generation of Fibonacci sublists.
+4. Lookup of values associated with keys in association lists.
+5. Replacement of values associated with keys in association lists.
+6. Addition of values to expressions in a specified way.
+7. Conversion of named expressions to prefix notation.
+8. Evaluation of named expressions.
+9. Conversion of operator expressions to prefix tokens.
+10. Conversion of named expressions to prefix tokens.
